@@ -1,33 +1,68 @@
 import java.util.Iterator;
+import java.util.Stack;
 
-/**
- * Implementation d'un type de donnees abstrait de <code>Liste</code> a l'aide d'un double chainage.
- * 
- * Les positions dans la <code>Liste</code> sont designees par des entiers.  L'element a la premiere
- * case de la liste est a la position <code>0</code> et l'element a la derniere case est a la position 
- * <code>taille() - 1</code>.
- * @param <E> Le type des elements places dans la <code>Liste</code>.
- */
 public class Liste< E > implements Iterable< E > {
 	/**
 	 * Une classe interne pour representer un <code>Chainon</code> contenant un element.
 	 * Il contient aussi deux references.  Une vers le <code>Chainon</code> precedant et une autre
 	 * vers le <code>Chainon</code> suivant.
 	 */
-	private class Chainon< EC > {
-		public EC element;
+	private abstract class Chainon< EC > {
 		public Chainon< EC > precedant; 
 		public Chainon< EC > suivant;
 
-		public Chainon( Chainon< EC > precedant, EC element ) {
-			this.element = element;
+		public Chainon() {
+			precedant = null;
+			suivant = null;
+		}
+		
+		public Chainon(Chainon<EC> precedant) {
 			this.precedant = precedant;
 		}
 
-		public Chainon( Chainon< EC > precedant, EC element, Chainon< EC > suivant ) {
-			this.element = element;
-			this.precedant = precedant;
-			this.suivant = suivant;
+	}
+	
+	private class Mot<EC> extends Chainon<EC>{
+		public String clef;
+		public int indexe;
+		
+		public Mot() {
+			super();
+			this.clef = null;
+			this.indexe = -1;
+		}
+		
+		public Mot(Chainon<EC> precedant, String clef, int indexe){
+			super(precedant);
+			this.clef = clef;
+			this.indexe = indexe;
+		}
+	}
+	
+	private class AccoladeOuvrante<EC> extends Chainon<EC>{
+		public Chainon<EC> associe;
+		
+		public AccoladeOuvrante() {
+			super();
+			associe = null;
+		}
+		
+		public AccoladeOuvrante(Chainon<EC> precedant) {
+			super(precedant);
+		}
+	}
+	
+	private class AccoladeFermante<EC> extends Chainon<EC>{
+		public Chainon<EC> associe;
+		
+		public AccoladeFermante() {
+			super();
+			associe = null;
+		}
+		
+		public AccoladeFermante(Chainon<EC> precedant, Chainon<EC> associe) {
+			super(precedant);
+			this.associe = associe;
 		}
 	}
 	
@@ -90,8 +125,12 @@ public class Liste< E > implements Iterable< E > {
 	
 	protected int _taille;
 	
+	//hey
 	
-	
+	protected  Stack<AccoladeOuvrante> pileAccolade = new Stack<AccoladeOuvrante>();
+	protected  Stack<Integer> pilePosition = new Stack<Integer>();
+	protected  Stack<AccoladeOuvrante> p = new Stack<AccoladeOuvrante>();
+	protected Chainon d = null ;
 	
 	/**
 	 * Construit une <code>Liste</code> vide.
@@ -101,18 +140,15 @@ public class Liste< E > implements Iterable< E > {
 		_taille = 0;
 	}
 	
-	
-	
-	
 	/**
 	 * Donne l'element a la position indiquee.
 	 * @param position La position de l'element a extraire.
 	 * @return L'element extrait.
 	 * @throws IndexOutOfBoundsException Lance si la position est invalide : <code> position < 0 || taille() <= position</code>.
 	 */
-	public E get( int position ) 
+	public Object get( int position ) 
 	throws IndexOutOfBoundsException { 
-		return getChainon( position ).element;
+		return getChainon( position );
 	}
 	
 
@@ -132,6 +168,55 @@ public class Liste< E > implements Iterable< E > {
 		_fin = nouveau;
 
 		++ _taille;
+	}
+	
+	public void insererMot ( String clef , int indexe) {
+		Mot nouveauMot = new Mot(_fin , clef , indexe);
+		
+		if( _taille == 0 ) {
+			_tete = nouveauMot;
+		} else {
+			_fin.suivant = nouveauMot;
+		}
+		
+		_fin = nouveauMot;
+
+		++ _taille;
+	}
+	
+	public void insererAcoladeOuvrante() {
+		AccoladeOuvrante nouvelle = new AccoladeOuvrante(_fin);
+		
+		if( _taille == 0 ) {
+			_tete = nouvelle;
+		} else {
+			_fin.suivant = nouvelle;
+		}
+		
+		_fin = nouvelle;
+
+		++ _taille;
+		
+		pileAccolade.push(nouvelle);
+		pilePosition.push(_taille);
+		
+	}
+	
+	public void insererAcoladeFermante() {
+		AccoladeFermante nouvelle = new AccoladeFermante(_fin, pileAccolade.peek());
+		pileAccolade.peek().associe = nouvelle;
+		pileAccolade.pop();
+		
+		if( _taille == 0 ) {
+			_tete = nouvelle;
+		} else {
+			_fin.suivant = nouvelle;
+		}
+		
+		_fin = nouvelle;
+
+		++ _taille;
+		
 	}
 	
 	
@@ -218,5 +303,39 @@ public class Liste< E > implements Iterable< E > {
 	 */
 	public int taille() {
 		return _taille;
+	}
+	
+	public void recherche (String cible) {
+		
+		Chainon courant = _tete ;
+		
+		while(courant != null) {
+			if(courant instanceof AccoladeOuvrante) {
+				p.push((AccoladeOuvrante)courant);
+			}
+			else if(courant instanceof AccoladeFermante) {
+				p.pop();
+			}
+			else if(courant instanceof Mot) {
+				if(((Mot)courant).clef.equals(cible)) {
+					d = courant ;
+				}
+			}
+			courant = courant.suivant;
+		}
+	}
+	
+	public String rechercheSub (String cible) {
+		String chemin = "" ;
+		
+		Chainon courant = d ;
+		
+		if ( ((Mot)courant).clef.equals(cible)) {
+			chemin = chemin + ((Mot)courant).clef ;
+		}
+		
+		else 
+		
+		return chemin;
 	}
 }
