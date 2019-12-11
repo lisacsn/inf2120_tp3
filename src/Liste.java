@@ -309,7 +309,7 @@ public class Liste< E > implements Iterable< E > {
 		
 		Chainon courant = _tete ;
 		
-		while(courant != null) {
+		while(courant != null && d == null) {
 			if(courant instanceof AccoladeOuvrante) {
 				p.push((AccoladeOuvrante)courant);
 			}
@@ -327,6 +327,7 @@ public class Liste< E > implements Iterable< E > {
 	
 	public String rechercheSub (String cible) {
 		String chemin = "" ;
+		boolean estTrouve = false;
 		
 		Chainon courant = d ;
 		
@@ -334,7 +335,31 @@ public class Liste< E > implements Iterable< E > {
 			chemin = chemin + ((Mot)courant).clef ;
 		}
 		
-		else 
+		else {
+			AccoladeOuvrante derniere ;
+			
+			while(! p.isEmpty()) {
+			derniere = p.peek();
+			courant = derniere.suivant ;
+			while(!derniere.associe.equals(courant) && !estTrouve) {
+				
+				if(courant instanceof AccoladeOuvrante) {
+					p.push((AccoladeOuvrante)courant);
+				}
+				else if(courant instanceof AccoladeFermante) {
+					p.pop();
+				}
+				else if(courant instanceof Mot) {
+					chemin = chemin + ((Mot)courant).clef;
+					if(((Mot)courant).clef.equals(cible)) {
+						estTrouve = true ;
+					}
+				}
+				courant = courant.suivant;
+			}
+			p.pop();
+		}
+		}
 		
 		return chemin;
 	}

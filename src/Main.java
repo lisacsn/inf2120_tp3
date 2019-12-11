@@ -68,6 +68,11 @@ public class Main {
 			}
 		}
 			System.out.println(maListeDoublementChainee.d);
+			System.out.println("");
+			
+			
+			String cible2 = sc.nextLine();
+			System.out.println(maListeDoublementChainee.rechercheSub(cible2));
 			sc.close();
  		
 		
