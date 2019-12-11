@@ -7,7 +7,7 @@ public class Liste< E > implements Iterable< E > {
 	 * Il contient aussi deux references.  Une vers le <code>Chainon</code> precedant et une autre
 	 * vers le <code>Chainon</code> suivant.
 	 */
-	private abstract class Chainon< EC > {
+	protected abstract class Chainon< EC > {
 		public Chainon< EC > precedant; 
 		public Chainon< EC > suivant;
 
@@ -22,7 +22,7 @@ public class Liste< E > implements Iterable< E > {
 
 	}
 	
-	private class Mot<EC> extends Chainon<EC>{
+	protected class Mot<EC> extends Chainon<EC>{
 		public String clef;
 		public int indexe;
 		
@@ -39,7 +39,7 @@ public class Liste< E > implements Iterable< E > {
 		}
 	}
 	
-	private class AccoladeOuvrante<EC> extends Chainon<EC>{
+	protected class AccoladeOuvrante<EC> extends Chainon<EC>{
 		public Chainon<EC> associe;
 		
 		public AccoladeOuvrante() {
@@ -52,7 +52,7 @@ public class Liste< E > implements Iterable< E > {
 		}
 	}
 	
-	private class AccoladeFermante<EC> extends Chainon<EC>{
+	protected class AccoladeFermante<EC> extends Chainon<EC>{
 		public Chainon<EC> associe;
 		
 		public AccoladeFermante() {
@@ -326,6 +326,7 @@ public class Liste< E > implements Iterable< E > {
 	}
 	
 	public String rechercheSub (String cible) {
+		Stack<AccoladeOuvrante> accoladeVisitee = new Stack<AccoladeOuvrante>();
 		String chemin = "" ;
 		boolean estTrouve = false;
 		
@@ -337,30 +338,34 @@ public class Liste< E > implements Iterable< E > {
 		
 		else {
 			AccoladeOuvrante derniere ;
-			
-			while(! p.isEmpty()) {
+			accoladeVisitee.push(p.peek());
+			while(! p.isEmpty() && !estTrouve) {
 			derniere = p.peek();
 			courant = derniere.suivant ;
 			while(!derniere.associe.equals(courant) && !estTrouve) {
 				
 				if(courant instanceof AccoladeOuvrante) {
-					p.push((AccoladeOuvrante)courant);
+					if (courant.equals(accoladeVisitee.peek())) {
+						courant = accoladeVisitee.peek().associe;
+					}
+					else p.push((AccoladeOuvrante)courant);
 				}
 				else if(courant instanceof AccoladeFermante) {
 					p.pop();
 				}
 				else if(courant instanceof Mot) {
-					chemin = chemin + ((Mot)courant).clef;
+					chemin = chemin + " " + ((Mot)courant).indexe;
 					if(((Mot)courant).clef.equals(cible)) {
 						estTrouve = true ;
+						this.d = courant ;
+
 					}
 				}
 				courant = courant.suivant;
 			}
-			p.pop();
+			accoladeVisitee.push(p.pop());
 		}
 		}
-		
 		return chemin;
 	}
 }

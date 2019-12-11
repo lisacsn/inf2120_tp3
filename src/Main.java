@@ -35,7 +35,6 @@ public class Main {
 		
 		int i = 0 ;
 		while(it.hasNext()) {
-			i++;
 			String valeur = it.next().toString();
 			if(valeur.equals("{")) {
 				maListeDoublementChainee.insererAcoladeOuvrante();
@@ -45,6 +44,7 @@ public class Main {
 			}
 			else {
 				maListeDoublementChainee.insererMot(valeur, i);
+				i++;
 			}
 			
 		}
@@ -73,6 +73,8 @@ public class Main {
 			
 			String cible2 = sc.nextLine();
 			System.out.println(maListeDoublementChainee.rechercheSub(cible2));
+			String cible3 = sc.nextLine();
+			System.out.println(maListeDoublementChainee.rechercheSub(cible3));
 			sc.close();
  		
 		
