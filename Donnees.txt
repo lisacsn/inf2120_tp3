@@ -1,0 +1,2 @@
+{ somme i { somme i taille } somme 
+ ab 	}
