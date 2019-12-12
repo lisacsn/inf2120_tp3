@@ -62,22 +62,19 @@ public class Main {
 			}
 			else if(res.charAt(0)=='t') {
 				String cible = res.substring(2);
-				System.out.println(cible);
  			
-				maListeDoublementChainee.recherche(cible);
+				System.out.println(maListeDoublementChainee.recherche(cible));
 			}
 		}
-			System.out.println(maListeDoublementChainee.d);
 			System.out.println("");
 			
 			
-			String cible2 = sc.nextLine();
-			System.out.println(maListeDoublementChainee.rechercheSub(cible2));
-			String cible3 = sc.nextLine();
-			System.out.println(maListeDoublementChainee.rechercheSub(cible3));
-			sc.close();
- 		
-		
+			String cible2 ="";
+			while (!cible2.equals("stop")){
+				cible2 = sc.nextLine();
+				System.out.println(maListeDoublementChainee.rechercheSub(cible2));
+			}
+			sc.close();		
 	}
 
 }

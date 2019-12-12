@@ -305,8 +305,8 @@ public class Liste< E > implements Iterable< E > {
 		return _taille;
 	}
 	
-	public void recherche (String cible) {
-		
+	public String recherche (String cible) {
+		String chemin = "";
 		Chainon courant = _tete ;
 		
 		while(courant != null && d == null) {
@@ -317,12 +317,14 @@ public class Liste< E > implements Iterable< E > {
 				p.pop();
 			}
 			else if(courant instanceof Mot) {
+				chemin = chemin + ((Mot)courant).indexe + " ";
 				if(((Mot)courant).clef.equals(cible)) {
 					d = courant ;
 				}
 			}
 			courant = courant.suivant;
 		}
+		return chemin ;
 	}
 	
 	public String rechercheSub (String cible) {
@@ -332,10 +334,10 @@ public class Liste< E > implements Iterable< E > {
 		
 		Chainon courant = d ;
 		
+		chemin = chemin + ((Mot)d).indexe;
 		if ( ((Mot)courant).clef.equals(cible)) {
 			chemin = chemin + ((Mot)courant).clef ;
-		}
-		
+		}		
 		else {
 			AccoladeOuvrante derniere ;
 			accoladeVisitee.push(p.peek());
@@ -346,6 +348,8 @@ public class Liste< E > implements Iterable< E > {
 				
 				if(courant instanceof AccoladeOuvrante) {
 					if (courant.equals(accoladeVisitee.peek())) {
+						//
+						//
 						courant = accoladeVisitee.peek().associe;
 					}
 					else p.push((AccoladeOuvrante)courant);
@@ -357,6 +361,7 @@ public class Liste< E > implements Iterable< E > {
 					chemin = chemin + " " + ((Mot)courant).indexe;
 					if(((Mot)courant).clef.equals(cible)) {
 						estTrouve = true ;
+						p.push(p.peek());
 						this.d = courant ;
 
 					}
@@ -368,4 +373,5 @@ public class Liste< E > implements Iterable< E > {
 		}
 		return chemin;
 	}
+	
 }
