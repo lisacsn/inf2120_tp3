@@ -24,16 +24,19 @@ public class Main {
 		while(file.hasNext()) {
 			liste.add(file.next());
 		}
+		
 		file.close();
 		
 		System.out.println(liste);
 				
 		Iterator it = liste.iterator();
 		
-		//Ce qu'il faut faire au dÃ©but d'aprÃ¨s ce que j'ai compris
-		Liste maListeDoublementChainee = new Liste(); //CrÃ©er une liste chainee vide
-		
+		//Création d'une liste doublement chainée vide
+
+		Liste maListeDoublementChainee = new Liste(); 
 		int i = 0 ;
+		
+		// ont remplie la liste doublement chainée 
 		while(it.hasNext()) {
 			String valeur = it.next().toString();
 			if(valeur.equals("{")) {
@@ -49,32 +52,43 @@ public class Main {
 			
 		}
 		
-		//On commence la recherche :
-		//premiÃ¨re recherche (la variable d est null)
+		String res = "";
 		
+		//On commence la recherche :
+		// si la requête commence par t alors on démarre l'algorithme
+		// si la requête commence pas f le logiciel se termine (sauf si d est null)
+				
+		//premiere recherche : la variable d est null et p est initialement vide
 		while(maListeDoublementChainee.d == null) {
+				
 			System.out.println("Entrez une commande : ");
-			String res = sc.nextLine();
-			System.out.println("La commande est : " + res);
- 		
+			res = sc.nextLine();
+	 		
 			if(res.charAt(0)=='f') {
-				System.out.println("Fin. Programme terminÃ©");
+				System.out.println("Vous êtes obligé de trouvé la cible! ");
 			}
 			else if(res.charAt(0)=='t') {
 				String cible = res.substring(2);
- 			
+	 		
 				System.out.println(maListeDoublementChainee.recherche(cible));
 			}
 		}
-			System.out.println("");
 			
-			
-			String cible2 ="";
-			while (!cible2.equals("stop")){
-				cible2 = sc.nextLine();
-				System.out.println(maListeDoublementChainee.rechercheSub(cible2));
+		//deuxieme recherche : d n'est plus null (on garde une trace de la recherche)
+		//et les recherches ne s'arrêtent pas tant que f est null.	
+		while(res.charAt(0) != 'f') {
+			System.out.println("Nous gardons une trace de votre recherche...");
+			System.out.println("Entrez une autre commande : ");
+			res = sc.nextLine();
+	 		
+			if(res.charAt(0)=='f') {
+				System.out.println("Fin. Programme termine");
 			}
-			sc.close();		
+			else if(res.charAt(0)=='t') {
+				String cible2 = res.substring(2);
+				System.out.println(maListeDoublementChainee.rechercheSub(cible2));
+			}	
+		}
+	sc.close();
 	}
-
 }
